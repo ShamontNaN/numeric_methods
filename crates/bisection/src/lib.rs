@@ -1,11 +1,24 @@
-pub fn bisect<F>(func:F, mut left_limit:f64, mut right_limit:f64, precision:f64) -> f64
+pub fn bisect<F>(func: F, mut left_limit: f64, mut right_limit: f64, precision: f64) -> f64
 where
-    F:Fn(f64) -> f64
+    F: Fn(f64) -> f64
 {
-    if func(left_limit) == 0.0
-    {
+    let result = if func(left_limit) == 0.0 {
         left_limit
-    }
+    } else if func(right_limit) == 0.0 {
+        right_limit
+    } else {
+        let mut temp = 0.0;
+        while (right_limit - left_limit).abs() > precision {
+            temp = left_limit + (right_limit - left_limit) / 2.0;
+            if func(left_limit).signum() != func(temp).signum() {
+                right_limit = temp;
+            } else {
+                left_limit = temp;
+            }
+        }
+        temp
+    };
+    result
 }
 
 #[cfg(test)]
@@ -14,7 +27,7 @@ mod tests {
 
     #[test]
     fn it_works() {
-        let result = bisect(|x| 5.0*x-20.0, 4.0, 5.0, 0.005);
-        assert_eq!(result, 4.0);    
+        let result = bisect(|x| 5.0 * x - 20.0, 4.0, 5.0, 0.005);
+        assert_eq!(result, 4.0);
     }
 }
