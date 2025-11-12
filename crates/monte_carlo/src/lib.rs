@@ -14,12 +14,8 @@ where
 
 #[cfg(test)]
 mod tests {
-    use std::f64::consts::E;
-
-    use super::*;
-
     #[test]
     fn it_works() {
-        let result = monte_carlo(|x| E.powf(x) / (1.0 + E.powf(2.0 * x)), 0.0, 1.0, 10000);
+        todo!();
     }
 }
