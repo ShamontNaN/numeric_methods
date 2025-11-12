@@ -1,6 +1,6 @@
 pub fn bisect<F>(func: F, mut left_limit: f64, mut right_limit: f64, precision: f64) -> f64
 where
-    F: Fn(f64) -> f64
+    F: Fn(f64) -> f64,
 {
     let result = if func(left_limit) == 0.0 {
         left_limit
