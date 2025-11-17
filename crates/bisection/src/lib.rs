@@ -1,11 +1,21 @@
-pub fn bisect<F>(func: F, mut left_limit: f64, mut right_limit: f64, precision: f64) -> f64
+use common::Errors;
+
+pub fn bisect<F>(
+    func: F,
+    mut left_limit: f64,
+    mut right_limit: f64,
+    precision: f64,
+) -> Result<f64, Errors>
 where
     F: Fn(f64) -> f64,
 {
-    let result = if func(left_limit) == 0.0 {
-        left_limit
+    if func(left_limit).signum() == func(right_limit).signum() {
+        Err(Errors::IncorrectRange)
+    }
+    if func(left_limit) == 0.0 {
+        Ok(left_limit)
     } else if func(right_limit) == 0.0 {
-        right_limit
+        Ok(right_limit)
     } else {
         let mut temp = 0.0;
         while (right_limit - left_limit).abs() > precision {
@@ -16,9 +26,8 @@ where
                 left_limit = temp;
             }
         }
-        temp
-    };
-    result
+        Ok(temp)
+    }
 }
 
 #[cfg(test)]
@@ -29,5 +38,11 @@ mod tests {
     fn it_works() {
         let result = bisect(|x| 5.0 * x - 20.0, 4.0, 5.0, 0.005);
         assert_eq!(result, 4.0);
+    }
+
+    #[test]
+    fn incorrect_range() {
+        let result = bisect(|x| 5.0 * x - 20.0, 5.0, 6.0, 0.005);
+        assert_eq!(result, 5.0);
     }
 }
